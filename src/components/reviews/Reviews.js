@@ -5,14 +5,37 @@ import {Container, Row, Col} from 'react-bootstrap';
 import ReviewForm from '../reviewForm/ReviewForm';
 
 const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
+    
 
     const revText = useRef();
     let params = useParams();
     const movieId = params.movieId;
 
+
     useEffect(()=>{
         getMovieData(movieId);
-    },[])
+    },[]) 
+    const addReview = async (e) =>{
+        e.preventDefault();
+
+        const rev = revText.current;
+
+        try
+        {
+            const response = await api.post("http://localhost:8080/api/v1/reviews",{reviewBody:rev.value,imdbId:movieId});
+            
+            const updatedReviews = [...reviews, {body:rev.value}];
+            
+    
+            rev.value = "";
+    
+            setReviews(updatedReviews);
+        }
+        catch(err)
+        {
+            console.error(err);
+        }
+    }
     return (
         <Container>
             <Row>
@@ -61,5 +84,6 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
     
     )
 }
+
 
 export default Reviews
